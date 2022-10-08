@@ -27,6 +27,33 @@ resource "aws_api_gateway_integration" "root_any" {
   integration_http_method = aws_api_gateway_method.root_any.http_method
   uri                     = aws_lambda_function.app.invoke_arn
 }
+resource "aws_api_gateway_resource" "proxy" {
+  rest_api_id = aws_api_gateway_rest_api.app.id
+  parent_id   = aws_api_gateway_rest_api.app.root_resource_id
+  path_part   = "{proxy+}"
+}
+resource "aws_api_gateway_method" "proxy_any" {
+  authorization    = "NONE"
+  http_method      = "ANY"
+  resource_id      = aws_api_gateway_resource.proxy.id
+  rest_api_id      = aws_api_gateway_rest_api.app.id
+  api_key_required = true
+}
+resource "aws_api_gateway_method_response" "proxy_any-200" {
+  rest_api_id = aws_api_gateway_rest_api.app.id
+  resource_id = aws_api_gateway_resource.proxy.id
+  http_method = aws_api_gateway_method.proxy_any.http_method
+  status_code = "200"
+}
+resource "aws_api_gateway_integration" "proxy_any" {
+  http_method             = aws_api_gateway_method.proxy_any.http_method
+  resource_id             = aws_api_gateway_resource.proxy.id
+  rest_api_id             = aws_api_gateway_rest_api.app.id
+  type                    = "AWS_PROXY"
+  cache_namespace         = aws_api_gateway_resource.proxy.id
+  integration_http_method = aws_api_gateway_method.proxy_any.http_method
+  uri                     = aws_lambda_function.app.invoke_arn
+}
 resource "aws_api_gateway_method_settings" "app" {
   rest_api_id = aws_api_gateway_rest_api.app.id
   stage_name  = aws_api_gateway_stage.v1.stage_name
@@ -41,6 +68,7 @@ resource "aws_api_gateway_deployment" "app" {
   rest_api_id = aws_api_gateway_rest_api.app.id
   depends_on = [
     aws_api_gateway_integration.root_any,
+    aws_api_gateway_integration.proxy_any,
   ]
   stage_description = "setting file hash = ${md5(file("./app/api.tf"))}"
   lifecycle {
@@ -78,5 +106,5 @@ resource "aws_lambda_permission" "app" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.app.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.app.execution_arn}/*/*"
+  source_arn    = "${aws_api_gateway_rest_api.app.execution_arn}/*/*/*"
 }
