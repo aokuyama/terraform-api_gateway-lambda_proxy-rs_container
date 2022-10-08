@@ -19,3 +19,6 @@ data "template_file" "buildspec" {
     docker_path_build  = "./deploy/lambda/build.dockerfile"
   }
 }
+data "aws_route53_zone" "selected" {
+  name = var.zone_name
+}

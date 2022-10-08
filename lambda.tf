@@ -5,6 +5,9 @@ resource "aws_lambda_function" "app" {
   image_uri     = "${aws_ecr_repository.app.repository_url}:${var.tag_deploy}"
   package_type  = "Image"
   role          = aws_iam_role.iam_for_lambda.arn
+  depends_on = [
+    aws_ecr_repository.app,
+  ]
 }
 resource "aws_iam_role" "iam_for_lambda" {
   path = "/service-role/"
