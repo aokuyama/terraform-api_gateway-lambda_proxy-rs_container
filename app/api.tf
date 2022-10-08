@@ -54,16 +54,6 @@ resource "aws_api_gateway_integration" "proxy_any" {
   integration_http_method = aws_api_gateway_method.proxy_any.http_method
   uri                     = aws_lambda_function.app.invoke_arn
 }
-resource "aws_api_gateway_method_settings" "app" {
-  rest_api_id = aws_api_gateway_rest_api.app.id
-  stage_name  = aws_api_gateway_stage.v1.stage_name
-  method_path = "*/*"
-
-  settings {
-    metrics_enabled = true
-    logging_level   = "INFO"
-  }
-}
 resource "aws_api_gateway_deployment" "app" {
   rest_api_id = aws_api_gateway_rest_api.app.id
   depends_on = [
@@ -79,10 +69,6 @@ resource "aws_api_gateway_stage" "v1" {
   stage_name    = "v1"
   rest_api_id   = aws_api_gateway_rest_api.app.id
   deployment_id = aws_api_gateway_deployment.app.id
-  access_log_settings {
-    destination_arn = aws_cloudwatch_log_group.api_gateway.arn
-    format          = "$context.integrationErrorMessage $context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.resourcePath $context.protocol\" $context.status $context.responseLength $context.requestId"
-  }
 }
 resource "aws_api_gateway_usage_plan" "standard" {
   name = "standard"
@@ -98,9 +84,6 @@ resource "aws_api_gateway_usage_plan_key" "standard" {
 }
 resource "aws_api_gateway_api_key" "app" {
   name = var.api_name
-}
-resource "aws_cloudwatch_log_group" "api_gateway" {
-  name = "/aws/apigateway/${var.api_name}"
 }
 resource "aws_lambda_permission" "app" {
   action        = "lambda:InvokeFunction"
