@@ -2,12 +2,9 @@ resource "aws_lambda_function" "app" {
   function_name = var.function_name
   memory_size   = 128
   timeout       = 3
-  image_uri     = "${aws_ecr_repository.app.repository_url}:${var.tag_deploy}"
+  image_uri     = var.function_image
   package_type  = "Image"
   role          = aws_iam_role.iam_for_lambda.arn
-  depends_on = [
-    aws_ecr_repository.app,
-  ]
 }
 resource "aws_iam_role" "iam_for_lambda" {
   path = "/service-role/"

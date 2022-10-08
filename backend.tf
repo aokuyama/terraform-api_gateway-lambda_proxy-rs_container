@@ -19,6 +19,16 @@ data "template_file" "buildspec" {
     docker_path_build  = "./deploy/lambda/build.dockerfile"
   }
 }
-data "aws_route53_zone" "selected" {
-  name = var.zone_name
+module "dev" {
+  source         = "./app"
+  region         = var.region
+  function_name  = "${var.function_name}-dev"
+  function_image = "${aws_ecr_repository.app.repository_url}:${var.tag_deploy}"
+  api_name       = "${var.api_name}-dev"
+  zone_name      = var.dev_zone_name
+  api_domain     = var.dev_api_domain
+  cert_arn       = var.dev_cert_arn
+  depends_on = [
+    aws_ecr_repository.app,
+  ]
 }

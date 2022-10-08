@@ -42,7 +42,7 @@ resource "aws_api_gateway_deployment" "app" {
   depends_on = [
     aws_api_gateway_integration.root_any,
   ]
-  stage_description = "setting file hash = ${md5(file("api.tf"))}"
+  stage_description = "setting file hash = ${md5(file("./app/api.tf"))}"
   lifecycle {
     create_before_destroy = true
   }

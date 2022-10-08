@@ -36,14 +36,14 @@ variable "uri_repository" {
   type    = string
   default = "https://example.com/example/example.git"
 }
-variable "zone_name" {
+variable "dev_zone_name" {
   type    = string
   default = "example.com"
 }
-variable "api_domain" {
+variable "dev_api_domain" {
   type    = string
   default = "example.com"
 }
-variable "cert_arn" {
+variable "dev_cert_arn" {
   type = string
 }
