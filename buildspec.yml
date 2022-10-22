@@ -7,6 +7,7 @@ phases:
     commands:
       - echo logging in to AWS ECR...
       - $(aws ecr get-login --no-include-email --region ${region})
+      - cd ${app_dir}
   build:
     commands:
       - docker image build -t ${build_tag} -f ${docker_path_build} .

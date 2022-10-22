@@ -19,3 +19,12 @@ variable "api_domain" {
 variable "cert_arn" {
   type = string
 }
+variable "jwk_url" {
+  type = string
+}
+variable "jwk_issuer" {
+  type = string
+}
+variable "access_control_allow_origin" {
+  type = string
+}

@@ -36,6 +36,10 @@ variable "uri_repository" {
   type    = string
   default = "https://example.com/example/example.git"
 }
+variable "app_dir" {
+  type    = string
+  default = "."
+}
 variable "dev_zone_name" {
   type    = string
   default = "example.com"
@@ -46,4 +50,15 @@ variable "dev_api_domain" {
 }
 variable "dev_cert_arn" {
   type = string
+}
+variable "jwk_url" {
+  type    = string
+  default = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"
+}
+variable "jwk_issuer" {
+  type = string
+}
+variable "access_control_allow_origin" {
+  type    = string
+  default = "*"
 }

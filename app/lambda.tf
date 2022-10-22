@@ -5,6 +5,13 @@ resource "aws_lambda_function" "app" {
   image_uri     = var.function_image
   package_type  = "Image"
   role          = aws_iam_role.iam_for_lambda.arn
+  environment {
+    variables = {
+      "JWK_URL"                     = var.jwk_url
+      "JWK_ISSUER"                  = var.jwk_issuer
+      "ACCESS_CONTROL_ALLOW_ORIGIN" = var.access_control_allow_origin
+    }
+  }
 }
 resource "aws_iam_role" "iam_for_lambda" {
   path = "/service-role/"
