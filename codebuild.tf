@@ -10,7 +10,15 @@ resource "aws_codebuild_project" "app" {
     git_submodules_config {
       fetch_submodules = false
     }
-    buildspec = data.template_file.buildspec.rendered
+    buildspec = templatefile("./buildspec.yml", {
+      region             = var.region
+      app_dir            = var.app_dir
+      build_tag          = "rust-build-release"
+      tag                = "${aws_ecr_repository.app.name}:${var.tag_deploy}"
+      repository_tag     = "${aws_ecr_repository.app.repository_url}:${var.tag_deploy}"
+      docker_path_deploy = "./deploy/lambda/Dockerfile"
+      docker_path_build  = "./deploy/lambda/build.dockerfile"
+    })
   }
   source_version = var.branch-name_deploy
   environment {

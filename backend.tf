@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.0.0"
+  required_version = "~> 1.4.6"
 }
 provider "aws" {
   region     = var.region
@@ -7,19 +7,6 @@ provider "aws" {
   secret_key = var.secret_key
 }
 data "aws_caller_identity" "self" {}
-data "template_file" "buildspec" {
-  template = file("./buildspec.yml")
-
-  vars = {
-    region             = var.region
-    app_dir            = var.app_dir
-    build_tag          = "rust-build-release"
-    tag                = "${aws_ecr_repository.app.name}:${var.tag_deploy}"
-    repository_tag     = "${aws_ecr_repository.app.repository_url}:${var.tag_deploy}"
-    docker_path_deploy = "./deploy/lambda/Dockerfile"
-    docker_path_build  = "./deploy/lambda/build.dockerfile"
-  }
-}
 module "dev" {
   source                      = "./app"
   region                      = var.region
